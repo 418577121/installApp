@@ -1,0 +1,81 @@
+          centos8 安装nacos集群
+
+1、将nacos压缩包放进linux指定目录 、解压
+
+2、解压后复制三份
+------------------
+cp -r nacos nacos8849
+cp -r nacos nacos8850
+cp -r nacos nacos8851
+-------------------
+
+3、修改 application.properties 、  cluster.conf
+
+  进入
+  --------
+  /usr/local/mynacos/nacos8849/conf
+  -------
+  编辑 application.properties
+  --------------
+  vim application.properties
+  --------------
+  修改端口为8849  server.port=8849
+  将下面注释全部打开、修改数据库连接
+    --------------
+    # spring.datasource.platform=mysql
+    # db.num=1
+    # db.url.0=jdbc:mysql://106.14.157.213:3306/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+    # db.user.0=root
+    # db.password.0=*************
+    --------------
+    复制一份 cluster.conf
+    cp cluster.conf.example cluster.conf
+    编辑 cluster.conf
+    vim cluster.cong
+    添加集群配置信息
+    -----------
+    127.0.0.1:8849
+    127.0.0.1:8850
+    127.0.0.1:8851
+    ------------
+
+4、启动一台nacos
+  进入 /usr/local/mynacos/nacos8849/bin
+  -----
+  ./startup.sh
+  -----
+  启动成功  访问 http://192.168.64.129:8849/nacos/index.html
+
+5、修改集群配置
+ 将修改的application.properties 、  cluster.conf 全部复制到 nacos8850 、 nacos8851
+
+ -------------
+ cp application.properties /usr/local/mynacos/nacos8850/conf/application.properties
+ cp application.properties /usr/local/mynacos/nacos8851/conf/application.properties
+ cp cluster.conf /usr/local/mynacos/nacos8850/conf/cluster.conf
+ cp cluster.conf /usr/local/mynacos/nacos8851/conf/cluster.conf
+ -------------
+ 修改  application.properties 50、51 端口
+
+6、加入nginx
+  修改配置文件
+  upstream nacoscluster {
+          server 127.0.0.1:8849;
+          server 127.0.0.1:8850;
+          server 127.0.0.1:8851;
+      }
+      server {
+          listen       8847;
+          server_name  localhost;
+
+          #charset koi8-r;
+
+          #access_log  logs/host.access.log  main;
+
+          location /nacos/ {
+             # root   html;
+             # index  index.html index.htm;
+             proxy_pass http://nacoscluster/nacos/;
+          }
+
+7、启动nginx 从 nginx访问
