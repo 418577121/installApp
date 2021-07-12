@@ -1,0 +1,21 @@
+    centos8 安装maven
+
+1、将maven 压缩包放在linux指定目录
+   解压
+   tar -zxvf **.tar.gz
+
+2、配置环境变量
+   1、编辑
+    ----------
+    vim  /etc/profile
+    ----------
+   2、在末尾追加
+
+    ----------
+    export MAVEN_HOME=/usr/local/mymaven/apache-maven-3.8.1
+    export PATH=${PATH}:${MAVEN_HOME}/bin
+    ----------
+    3、让配置立即生效
+    --------
+    source /etc/profile
+    --------
