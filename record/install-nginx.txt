@@ -1,0 +1,38 @@
+               centos8 自定义目录安装nginx
+1、安装工具和库
+---------
+yum -y install gcc-c++ pcre pcre-devel zlib zlib-devel openssl openssl-devel
+---------
+# PCRE是一个Perl库，包括 perl 兼容的正则表达式库。nginx 的 http 模块使用 pcre 来解析正则表达式
+# zlib库提供了很多种压缩和解压缩的方式， nginx 使用 zlib 对 http 包的内容进行 gzip
+
+2、下载并解压nginx
+---------
+wget -c https://nginx.org/download/nginx-1.18.0.tar.gz
+----------
+
+3、编译与安装nginx
+  1、configure
+    ------------------------
+    ./configure --prefix=/usr/local/mynginx --with-http_stub_status_module --with-http_ssl_module --with-http_v2_module --with-http_sub_module --with-http_gzip_static_module --with-pcre
+    ------------------------
+    #--prefix 指定安装路径
+    #--with-http_stub_status_module    允许查看nginx状态的模块
+    # --with-http_ssl_module     支持https的模块
+   2、编译并安装
+   --------------------
+   make && make install
+   --------------------
+
+4、启动nginx
+  进入到安装nginx目录下面的sbin
+  启动命令
+  ------
+  ./nginx
+  -------
+  其他命令：
+  -------------
+ ./nginx -s quit:   （温和）此方式停止步骤是待nginx进程处理任务完毕进行停止。
+ ./nginx -s stop:   （强硬）此方式相当于先查出nginx进程id再使用kill命令强制杀掉进程。
+ ./nginx -s reload   重启nginx(不推荐此方法，推荐先停止在启动)
+  ---------------
